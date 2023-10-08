@@ -6,11 +6,13 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField] Camera mainCamera;
     [SerializeField] GameObject player;
+    float xScreenHalfSize;
     float yScreenHalfSize;
 
     void Start()
     {
         yScreenHalfSize = Camera.main.orthographicSize;
+        xScreenHalfSize = yScreenHalfSize * Camera.main.aspect;
     }
 
     void Update()
