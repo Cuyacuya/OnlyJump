@@ -124,6 +124,7 @@ NavMeshSettings:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
 --- !u!1 &18912773
+
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -134,6 +135,7 @@ GameObject:
   - component: {fileID: 18912774}
   - component: {fileID: 18912776}
   - component: {fileID: 18912775}
+
   m_Layer: 0
   m_Name: PlatformTilemap
   m_TagString: Untagged
@@ -388,6 +390,8 @@ Tilemap:
     e32: 0
     e33: 1
 --- !u!1 &30522089
+
+
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
