@@ -6,79 +6,101 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rigidbody;
     [SerializeField] bool isGrounded = true;
-
-    [SerializeField] float jumpValue = 0f;
+    [SerializeField] bool canJump = true;
 
     float moveInput;
+    [SerializeField] float jumpValue = 0f;
     [SerializeField] float walkSpeed = 6f;
 
-    float xScreenHalfSize;
-    float yScreenHalfSize;
+    [SerializeField] PhysicsMaterial2D playerMat;
+    [SerializeField] PhysicsMaterial2D playerBounce;
+
+    BoxCollider2D boxCollider;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-
-        yScreenHalfSize = Camera.main.orthographicSize;
-        xScreenHalfSize = yScreenHalfSize * Camera.main.aspect;
+        boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        Move();
+        isGrounded = IsGrounded();
         Jump();
     }
 
-    private void Move()
+    private bool IsGrounded()
     {
-        moveInput = Input.GetAxis("Horizontal");
-        transform.localPosition = ClampPosition(new Vector2(transform.localPosition.x + moveInput * walkSpeed * Time.deltaTime, transform.localPosition.y));
-    }
-
-    // 플레이어가 카메라 화면 밖으로 나가지 않게 함 
-    private Vector3 ClampPosition(Vector3 position)
-    {
-        return new Vector3(Mathf.Clamp(position.x, -xScreenHalfSize, xScreenHalfSize), position.y, position.z);
+        if(boxCollider.IsTouchingLayers(LayerMask.GetMask("Platform")))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void Jump()
     {
-        if(Input.GetKeyDown("space") && isGrounded)
+        moveInput = Input.GetAxis("Horizontal");
+
+        if(jumpValue == 0f && isGrounded)
+        {
+            rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
+        }
+
+        if (jumpValue> 0)
+        {
+            rigidbody.sharedMaterial = playerBounce;
+        }
+        else
+        {
+            rigidbody.sharedMaterial = playerMat;
+        }
+
+        
+
+        if (Input.GetKey("space") && isGrounded && canJump)
+        {
+            jumpValue += 0.3f;
+        }
+
+        if (Input.GetKeyDown("space") && isGrounded && canJump)
         {
             // 점프 직전에 가로 이동에 의한 영향을 없앰 
             rigidbody.velocity = new Vector2(0f, rigidbody.velocity.y);
         }
-        if(Input.GetKey("space") && isGrounded)
+
+        // 20 넘어서 자동으로 점프되면 canJump는 false가 되었다가 다시 true로 돌아옴
+        if (jumpValue > 20 && isGrounded)
         {
-            jumpValue += 0.1f;
-        }
-        if(Input.GetKeyUp("space") && isGrounded)
-        {
-            if(jumpValue > 20f)
-            {
-                jumpValue = 20f;
-            }
             float tempx = moveInput * walkSpeed;
             float tempy = jumpValue;
             rigidbody.velocity = new Vector2(tempx, tempy);
-
-            jumpValue = 0f;
+            Invoke("ResetJump", 0.2f);
         }
-    }
 
-    // 바닥에 닿았음을 감지하는 처리
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // 바닥과 닿았고, 충돌 표면이 위쪽을 보고 있으면
-        if (collision.contacts[0].normal.y > 0.7f)
+        if (Input.GetKeyUp("space"))
         {
-            isGrounded = true;
+            if(isGrounded)
+            {
+                float tempx = moveInput * walkSpeed;
+                float tempy = jumpValue;
+                rigidbody.velocity = new Vector2(tempx, tempy);
+
+                
+
+                // 점프 후 jumpValue 초기화
+                jumpValue = 0f;
+            }
+            canJump = true; 
         }
     }
 
-    // 바닥에서 벗어났음을 감지하는 처리
-    private void OnCollisionExit2D(Collision2D collision)
+    private void ResetJump()
     {
-        isGrounded = false;
+        jumpValue = 0f;
+        canJump = false;
     }
 }
