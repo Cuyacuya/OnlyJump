@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    void FixedUpdate()
+
+    private void Update()
     {
         isGrounded = IsGrounded();
         Jump();
@@ -48,6 +49,12 @@ public class PlayerController : MonoBehaviour
         if(jumpValue == 0f && isGrounded)
         {
             rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
+        }
+
+        // jumpValue가 20이 넘었을때 스페이스를 뗀 경우 
+        if (jumpValue == 0.0f && !isGrounded)
+        {
+            canJump = true;
         }
 
         if (jumpValue> 0)
@@ -78,8 +85,14 @@ public class PlayerController : MonoBehaviour
             float tempx = moveInput * walkSpeed;
             float tempy = jumpValue;
             rigidbody.velocity = new Vector2(tempx, tempy);
+
+            // TODO : invoke 때문에 20이 넘어서 점프했을때까지 space바를 안떼고 있따가
+            // 떼고나서 canJump가 true로 바뀌었는데, 
+            // invoke 가 되어서 canJump가 false로 되는 문제 O 
             Invoke("ResetJump", 0.2f);
         }
+
+        
 
         if (Input.GetKeyUp("space"))
         {
@@ -88,8 +101,6 @@ public class PlayerController : MonoBehaviour
                 float tempx = moveInput * walkSpeed;
                 float tempy = jumpValue;
                 rigidbody.velocity = new Vector2(tempx, tempy);
-
-                
 
                 // 점프 후 jumpValue 초기화
                 jumpValue = 0f;
@@ -100,7 +111,7 @@ public class PlayerController : MonoBehaviour
 
     private void ResetJump()
     {
-        jumpValue = 0f;
         canJump = false;
+        jumpValue = 0f;
     }
 }
