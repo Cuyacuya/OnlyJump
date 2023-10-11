@@ -1,10 +1,11 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] Camera mainCamera;
+    [SerializeField] CinemachineVirtualCamera mainCamera;
     [SerializeField] GameObject player;
     float xScreenHalfSize;
     float yScreenHalfSize;
