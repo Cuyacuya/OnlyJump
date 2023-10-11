@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
-
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,17 +17,10 @@ public class PlayerController : MonoBehaviour
 
     BoxCollider2D boxCollider;
 
-    SpriteRenderer spriteRenderer;
-
-    Animator animator;
-    public bool IsRun;
-
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
     }
 
 
@@ -42,15 +33,6 @@ public class PlayerController : MonoBehaviour
         rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
 
         Jump();
-
-        if (Input.GetButton("Horizontal"))
-        {
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-        }
-        if (rigidbody.velocity.y == 0)
-        {
-            animator.SetBool("IsJump", false);
-        }
     }
 
     private bool IsGrounded()
@@ -68,20 +50,11 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
 
-        moveInput = Input.GetAxis("Horizontal");
-        if (rigidbody.velocity.x == 0)
-        {
-            animator.SetBool("IsRun", false);
-        }
-        else
-            animator.SetBool("IsRun", true);
-         
-        
-        if (jumpValue == 0f && isGrounded)
+        if(jumpValue == 0f && isGrounded)
         {
         }
 
-        // jumpValueê°€ 20ì´ ë„˜ì—ˆì„ë•Œ ìŠ¤íŽ˜ì´ìŠ¤ë¥¼ ë—€ ê²½ìš° 
+        // jumpValue°¡ 20ÀÌ ³Ñ¾úÀ»¶§ ½ºÆäÀÌ½º¸¦ ¶¾ °æ¿ì 
         if (jumpValue == 0.0f && !isGrounded)
         {
             canJump = true;
@@ -100,26 +73,26 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey("space") && isGrounded && canJump)
         {
-            jumpValue += 0.2f;
+            jumpValue += 0.3f;
         }
 
         if (Input.GetKeyDown("space") && isGrounded && canJump)
         {
-            // ì í”„ ì§ì „ì— ê°€ë¡œ ì´ë™ì— ì˜í•œ ì˜í–¥ì„ ì—†ì•° 
+            // Á¡ÇÁ Á÷Àü¿¡ °¡·Î ÀÌµ¿¿¡ ÀÇÇÑ ¿µÇâÀ» ¾ø¾Ú 
             rigidbody.velocity = new Vector2(0f, rigidbody.velocity.y);
         }
 
-        // 20 ë„˜ì–´ì„œ ìžë™ìœ¼ë¡œ ì í”„ë˜ë©´ canJumpëŠ” falseê°€ ë˜ì—ˆë‹¤ê°€ ë‹¤ì‹œ trueë¡œ ëŒì•„ì˜´
+        // 20 ³Ñ¾î¼­ ÀÚµ¿À¸·Î Á¡ÇÁµÇ¸é canJump´Â false°¡ µÇ¾ú´Ù°¡ ´Ù½Ã true·Î µ¹¾Æ¿È
         if (jumpValue > 20 && isGrounded)
         {
             float tempx = moveInput * walkSpeed;
             float tempy = jumpValue;
             rigidbody.velocity = new Vector2(tempx, tempy);
 
-            // TODO : invoke ë•Œë¬¸ì— 20ì´ ë„˜ì–´ì„œ ì í”„í–ˆì„ë•Œê¹Œì§€ spaceë°”ë¥¼ ì•ˆë–¼ê³  ìžˆë”°ê°€
-            // ë–¼ê³ ë‚˜ì„œ canJumpê°€ trueë¡œ ë°”ë€Œì—ˆëŠ”ë°, 
-            // invoke ê°€ ë˜ì–´ì„œ canJumpê°€ falseë¡œ ë˜ëŠ” ë¬¸ì œ O 
-            Invoke("ResetJump", 0.5f);
+            // TODO : invoke ¶§¹®¿¡ 20ÀÌ ³Ñ¾î¼­ Á¡ÇÁÇßÀ»¶§±îÁö space¹Ù¸¦ ¾È¶¼°í ÀÖµû°¡
+            // ¶¼°í³ª¼­ canJump°¡ true·Î ¹Ù²î¾ú´Âµ¥, 
+            // invoke °¡ µÇ¾î¼­ canJump°¡ false·Î µÇ´Â ¹®Á¦ O 
+            Invoke("ResetJump", 0.2f);
         }
 
         
@@ -131,44 +104,17 @@ public class PlayerController : MonoBehaviour
                 float tempx = moveInput * walkSpeed;
                 float tempy = jumpValue;
                 rigidbody.velocity = new Vector2(tempx, tempy);
-                animator.SetBool("IsJump", true);
-                // ì í”„ í›„ jumpValue ì´ˆê¸°í™”
+
+                // Á¡ÇÁ ÈÄ jumpValue ÃÊ±âÈ­
                 jumpValue = 0f;
             }
             canJump = true; 
         }
-        
     }
 
     private void ResetJump()
     {
         canJump = false;
         jumpValue = 0f;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "enemy")
-        {
-           OnDamaged(collision.transform.position);
-        }
-    }
-    void OnDamaged(Vector2 targetpos)
-    {
-        gameObject.layer = 7;
-
-
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-
-        int dirc = transform.position.x - targetpos.x > 0 ? 10 : -10;
-        rigidbody.AddForce(new Vector2(dirc, 10)*5, ForceMode2D.Impulse);
-
-        Invoke("OffDamaged", 3);
-    }
-    void OffDamaged()
-    {
-        gameObject.layer = 6;
-
-        spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 }

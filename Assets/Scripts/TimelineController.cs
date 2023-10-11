@@ -36,8 +36,6 @@ public class TimelineController : MonoBehaviour
 
         playableDirector.Stop();
 
-        Debug.Log("컷씬 종료");
-
         // 고양이 비활성화
         cat.SetActive(false);
         // 플레이어 활성화
