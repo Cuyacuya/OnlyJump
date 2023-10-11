@@ -27,6 +27,11 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         isGrounded = IsGrounded();
+
+        moveInput = Input.GetAxis("Horizontal");
+
+        rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
+
         Jump();
     }
 
@@ -44,11 +49,9 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        moveInput = Input.GetAxis("Horizontal");
 
         if(jumpValue == 0f && isGrounded)
         {
-            rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
         }
 
         // jumpValue가 20이 넘었을때 스페이스를 뗀 경우 
