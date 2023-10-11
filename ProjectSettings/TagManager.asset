@@ -3,12 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Platform
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Platform
   - Water
   - UI
   - 
@@ -46,6 +47,9 @@ TagManager:
     locked: 0
   - name: Platform
     uniqueID: 3484138063
+    locked: 0
+  - name: Cat
+    uniqueID: 2735190325
     locked: 0
   - name: Player
     uniqueID: 3219114841
