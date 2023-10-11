@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 public class PlayerController : MonoBehaviour
 {
+    SpriteRenderer spriteRenderer;
     Rigidbody2D rigidbody;
+    
     [SerializeField] bool isGrounded = true;
 
     [SerializeField] float jumpValue = 0f;
@@ -18,9 +22,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         yScreenHalfSize = Camera.main.orthographicSize;
         xScreenHalfSize = yScreenHalfSize * Camera.main.aspect;
+       
     }
 
     void Update()
@@ -31,7 +37,15 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        moveInput = Input.GetAxis("Horizontal");
+        moveInput = Input.GetAxis("Horizontal");    
+        if (moveInput < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            spriteRenderer.flipX = false;
+        }
         transform.localPosition = ClampPosition(new Vector2(transform.localPosition.x + moveInput * walkSpeed * Time.deltaTime, transform.localPosition.y));
     }
 
