@@ -36,6 +36,11 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         isGrounded = IsGrounded();
+
+        moveInput = Input.GetAxis("Horizontal");
+
+        rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
+
         Jump();
 
         if (Input.GetButton("Horizontal"))
@@ -62,6 +67,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+
         moveInput = Input.GetAxis("Horizontal");
         if (rigidbody.velocity.x == 0)
         {
@@ -73,10 +79,9 @@ public class PlayerController : MonoBehaviour
         
         if (jumpValue == 0f && isGrounded)
         {
-            rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
         }
 
-        // jumpValue°¡ 20ÀÌ ³Ñ¾úÀ»¶§ ½ºÆäÀÌ½º¸¦ ¶¾ °æ¿ì 
+        // jumpValueê°€ 20ì´ ë„˜ì—ˆì„ë•Œ ìŠ¤í˜ì´ìŠ¤ë¥¼ ë—€ ê²½ìš° 
         if (jumpValue == 0.0f && !isGrounded)
         {
             canJump = true;
@@ -100,20 +105,20 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown("space") && isGrounded && canJump)
         {
-            // Á¡ÇÁ Á÷Àü¿¡ °¡·Î ÀÌµ¿¿¡ ÀÇÇÑ ¿µÇâÀ» ¾ø¾Ú 
+            // ì í”„ ì§ì „ì— ê°€ë¡œ ì´ë™ì— ì˜í•œ ì˜í–¥ì„ ì—†ì•° 
             rigidbody.velocity = new Vector2(0f, rigidbody.velocity.y);
         }
 
-        // 20 ³Ñ¾î¼­ ÀÚµ¿À¸·Î Á¡ÇÁµÇ¸é canJump´Â false°¡ µÇ¾ú´Ù°¡ ´Ù½Ã true·Î µ¹¾Æ¿È
+        // 20 ë„˜ì–´ì„œ ìë™ìœ¼ë¡œ ì í”„ë˜ë©´ canJumpëŠ” falseê°€ ë˜ì—ˆë‹¤ê°€ ë‹¤ì‹œ trueë¡œ ëŒì•„ì˜´
         if (jumpValue > 20 && isGrounded)
         {
             float tempx = moveInput * walkSpeed;
             float tempy = jumpValue;
             rigidbody.velocity = new Vector2(tempx, tempy);
 
-            // TODO : invoke ¶§¹®¿¡ 20ÀÌ ³Ñ¾î¼­ Á¡ÇÁÇßÀ»¶§±îÁö space¹Ù¸¦ ¾È¶¼°í ÀÖµû°¡
-            // ¶¼°í³ª¼­ canJump°¡ true·Î ¹Ù²î¾ú´Âµ¥, 
-            // invoke °¡ µÇ¾î¼­ canJump°¡ false·Î µÇ´Â ¹®Á¦ O 
+            // TODO : invoke ë•Œë¬¸ì— 20ì´ ë„˜ì–´ì„œ ì í”„í–ˆì„ë•Œê¹Œì§€ spaceë°”ë¥¼ ì•ˆë–¼ê³  ìˆë”°ê°€
+            // ë–¼ê³ ë‚˜ì„œ canJumpê°€ trueë¡œ ë°”ë€Œì—ˆëŠ”ë°, 
+            // invoke ê°€ ë˜ì–´ì„œ canJumpê°€ falseë¡œ ë˜ëŠ” ë¬¸ì œ O 
             Invoke("ResetJump", 0.5f);
         }
 
@@ -127,7 +132,7 @@ public class PlayerController : MonoBehaviour
                 float tempy = jumpValue;
                 rigidbody.velocity = new Vector2(tempx, tempy);
                 animator.SetBool("IsJump", true);
-                // Á¡ÇÁ ÈÄ jumpValue ÃÊ±âÈ­
+                // ì í”„ í›„ jumpValue ì´ˆê¸°í™”
                 jumpValue = 0f;
             }
             canJump = true; 
