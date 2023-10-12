@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Platform
   - enemy
+  - Ending
   layers:
   - Default
   - TransparentFX
