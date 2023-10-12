@@ -4048,6 +4048,7 @@ MonoBehaviour:
   playerMat: {fileID: 6200000, guid: e1dc0e37bf1bdb249b7b1ea8e6fd51f8, type: 2}
   playerBounce: {fileID: 6200000, guid: d8d2b29e49fd5ff4a9a6880bfabbcfa3, type: 2}
   IsRun: 0
+  ta: {fileID: 0}
 --- !u!50 &507270975
 Rigidbody2D:
   serializedVersion: 4
@@ -4314,7 +4315,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2.32
+  orthographic size: 6.03
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -7547,6 +7548,7 @@ MonoBehaviour:
   playerMat: {fileID: 0}
   playerBounce: {fileID: 0}
   IsRun: 0
+  ta: {fileID: 11400000, guid: 3c424800e25b46c4a8942370ffb97084, type: 2}
 --- !u!58 &1088039393
 CircleCollider2D:
   m_ObjectHideFlags: 0

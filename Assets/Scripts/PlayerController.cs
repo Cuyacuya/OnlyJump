@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     public bool IsRun;
 
     private PlayableDirector pd;
-    public TimelineAsset ta;
+    
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             SceneManager.LoadScene(2);
-            pd.Play();
+            
 
         }
     }
