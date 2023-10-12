@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
+using UnityEngine.Timeline;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,12 +26,15 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     public bool IsRun;
 
+    private PlayableDirector pd;
+    public TimelineAsset ta;
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         circleCollider = GetComponent<CircleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        pd = GetComponent<PlayableDirector>();
     }
 
 
@@ -47,6 +52,18 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsJump", false);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Ending")
+        {
+            other.gameObject.SetActive(false);
+            SceneManager.LoadScene(2);
+            pd.Play();
+
+        }
+    }
+
 
     private bool IsGrounded()
     {
