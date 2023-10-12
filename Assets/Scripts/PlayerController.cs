@@ -27,7 +27,9 @@ public class PlayerController : MonoBehaviour
     public bool IsRun;
 
     private PlayableDirector pd;
-    
+
+    AudioSource audioSource;
+
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         pd = GetComponent<PlayableDirector>();
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -127,6 +130,7 @@ public class PlayerController : MonoBehaviour
             float tempx = moveInput * walkSpeed;
             float tempy = jumpValue;
             rigidbody.velocity = new Vector2(tempx, tempy);
+            PlaySound("jumpSound");
 
             // TODO : invoke 때문에 20이 넘어서 점프했을때까지 space바를 안떼고 있따가
             // 떼고나서 canJump가 true로 바뀌었는데, 
@@ -144,6 +148,7 @@ public class PlayerController : MonoBehaviour
                 float tempy = jumpValue;
                 rigidbody.velocity = new Vector2(tempx, tempy);
                 animator.SetBool("IsJump", true);
+                PlaySound("jumpSound");
                 // 점프 후 jumpValue 초기화
                 jumpValue = 0f;
             }
@@ -162,13 +167,13 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.gameObject.tag == "enemy")
         {
-           OnDamaged(collision.transform.position);
+            OnDamaged(collision.transform.position);
+            PlaySound("hitSound");
         }
     }
     void OnDamaged(Vector2 targetpos)
     {
         gameObject.layer = 7;
-
 
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
@@ -177,10 +182,26 @@ public class PlayerController : MonoBehaviour
 
         Invoke("OffDamaged", 3);
     }
+
     void OffDamaged()
     {
         gameObject.layer = 6;
 
         spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    private void PlayAudioClip(AudioClip audioClip)
+    {
+        audioSource.clip = audioClip;
+        audioSource.Play();
+    }
+
+    private void PlaySound(string soundName)
+    {
+        AudioClip sound = SoundManager.Instance.GetClipFromPlaylist(soundName);
+        if (sound != null)
+        {
+            PlayAudioClip(sound);
+        }
     }
 }
