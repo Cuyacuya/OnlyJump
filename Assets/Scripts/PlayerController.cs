@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -15,12 +17,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] PhysicsMaterial2D playerMat;
     [SerializeField] PhysicsMaterial2D playerBounce;
 
-    BoxCollider2D boxCollider;
+    CircleCollider2D circleCollider;
+
+    SpriteRenderer spriteRenderer;
+
+    Animator animator;
+    public bool IsRun;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        circleCollider = GetComponent<CircleCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
 
@@ -28,11 +37,20 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = IsGrounded();
         Jump();
+
+        if (Input.GetButton("Horizontal"))
+        {
+            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+        }
+        if (rigidbody.velocity.y == 0)
+        {
+            animator.SetBool("IsJump", false);
+        }
     }
 
     private bool IsGrounded()
     {
-        if(boxCollider.IsTouchingLayers(LayerMask.GetMask("Platform")))
+        if(circleCollider.IsTouchingLayers(LayerMask.GetMask("Platform")))
         {
             return true;
         }
@@ -45,8 +63,15 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         moveInput = Input.GetAxis("Horizontal");
-
-        if(jumpValue == 0f && isGrounded)
+        if (rigidbody.velocity.x == 0)
+        {
+            animator.SetBool("IsRun", false);
+        }
+        else
+            animator.SetBool("IsRun", true);
+         
+        
+        if (jumpValue == 0f && isGrounded)
         {
             rigidbody.velocity = new Vector2(moveInput * walkSpeed, rigidbody.velocity.y);
         }
@@ -70,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey("space") && isGrounded && canJump)
         {
-            jumpValue += 0.3f;
+            jumpValue += 0.2f;
         }
 
         if (Input.GetKeyDown("space") && isGrounded && canJump)
@@ -89,7 +114,7 @@ public class PlayerController : MonoBehaviour
             // TODO : invoke 때문에 20이 넘어서 점프했을때까지 space바를 안떼고 있따가
             // 떼고나서 canJump가 true로 바뀌었는데, 
             // invoke 가 되어서 canJump가 false로 되는 문제 O 
-            Invoke("ResetJump", 0.2f);
+            Invoke("ResetJump", 0.5f);
         }
 
         
@@ -101,17 +126,44 @@ public class PlayerController : MonoBehaviour
                 float tempx = moveInput * walkSpeed;
                 float tempy = jumpValue;
                 rigidbody.velocity = new Vector2(tempx, tempy);
-
+                animator.SetBool("IsJump", true);
                 // 점프 후 jumpValue 초기화
                 jumpValue = 0f;
             }
             canJump = true; 
         }
+        
     }
 
     private void ResetJump()
     {
         canJump = false;
         jumpValue = 0f;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "enemy")
+        {
+           OnDamaged(collision.transform.position);
+        }
+    }
+    void OnDamaged(Vector2 targetpos)
+    {
+        gameObject.layer = 7;
+
+
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        int dirc = transform.position.x - targetpos.x > 0 ? 10 : -10;
+        rigidbody.AddForce(new Vector2(dirc, 10)*5, ForceMode2D.Impulse);
+
+        Invoke("OffDamaged", 3);
+    }
+    void OffDamaged()
+    {
+        gameObject.layer = 6;
+
+        spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 }
